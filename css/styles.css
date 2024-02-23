@@ -1,0 +1,8 @@
+body{
+    display: block;
+    background-image: url('../img/concrete-dark.png');
+}
+
+main{
+    margin-bottom: 80px;
+}
