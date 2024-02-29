@@ -1,3 +1,18 @@
+//CALCULATE THE MILLISECONDS BY DAY, HOUR, MIN, SEC AND DECLARATE OF VARIABLES NEDEED
+let countTime = '';
+
+const dayH = 24, minH = 60, secH = 3600, milliSecMin = 60000, sec = 1000;
+
+const milliSecDay = ((dayH * secH)*sec);
+
+const milliSecH = minH * milliSecMin;
+
+let MSDE;
+
+let idIntVal;
+let res;
+
+//CREATE THE WEB COMPONENT TEMPLATE
 const template = document.createElement('template');
 
 template.innerHTML = `
@@ -17,9 +32,10 @@ template.innerHTML = `
     grid-template-columns: repeat(300px 1fr);
 }
 
-span{
+#counter{
     font-size: 2rem;
     grid-area: sn;
+    text-align: center;
 }
 
 img{
@@ -32,6 +48,7 @@ img{
     <div class="items-container">
         <img id="srcImg"/>
         <span id="counter"></span>
+        <span>Dias, Horas, Minutos, Segundos</span>
     </div>
 </div>
 
@@ -93,12 +110,16 @@ class CounterInfo extends HTMLElement{
 
     assignCLimit(){
         if(this.dateLimit){
-            this.cLimit = this.shadowRoot.getElementById('counter');
-            this.cLimit.innerHTML = this.dateLimit;
+            this.convertDateToMilli(this.dateLimit);
+            if(!idIntVal){
+                idIntVal = setInterval(this.timeLess(), 1000);
+            }
+            
         }else{
             this.cLimit = this.shadowRoot.getElementById('counter');
             this.cLimit.innerHTML = '12 : 01 : 45 : 37';
         }
+
     }
 
     assignFontSize(){
@@ -130,6 +151,41 @@ class CounterInfo extends HTMLElement{
         }
     }
 
+    //METHODS OF CALCULATE THE DATE OF EVENT, AND SHOW THE COUNT DOWN TO GLOBAL LEVEL. 
+    convertDateToMilli(value){
+        const date = new Date(value);
+
+        var cadena = new Date(date + ' GMT+01:00');
+
+        const dateEvent = cadena.toISOString();
+    
+        MSDE = Date.parse(dateEvent);
+        console.log(dateEvent);
+    
+        console.log(MSDE);
+    }
+
+    timeLess(){
+        let dias = 0, horas = 0, minutos = 0, segundos = 0;
+        let secondsCurrent = Date.now();
+        //console.log(secondsCurrent);
+        res = MSDE - secondsCurrent;
+        console.log(res);
+        if(res >= 0){
+            dias = Math.floor(res/milliSecDay);
+            horas = Math.floor(res/milliSecH);
+            minutos = Math.floor(res/milliSecMin);
+            segundos = Math.floor(res/sec);
+        }else{
+            clearInterval(idIntVal);
+            idIntVal = null;
+        }
+        
+        countTime = dias+' : '+horas+' : '+minutos+' : '+segundos;
+
+        this.cLimit = this.shadowRoot.getElementById('counter');
+        this.cLimit.innerHTML = countTime;
+    }
 
 }
 
